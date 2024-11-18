@@ -1,17 +1,11 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-
-const users = [
-	{ id: 1, firstName: 'John', lastName: 'Doe', role: 'admin' },
-	{ id: 2, firstName: 'Jane', lastName: 'Smith', role: 'user' },
-	{ id: 3, firstName: 'Alice', lastName: 'Johnson', role: 'moderator' },
-	{ id: 4, firstName: 'Bob', lastName: 'Brown', role: 'user' },
-	{ id: 5, firstName: 'Charlie', lastName: 'Davis', role: 'admin' }
-];
-
+const usersRouter = require("./routes/users.js")
 
 app.use(express.json());
+
+app.use("/api/", usersRouter)
 
 app.get('/', (req, res) => {
         res.json(users)
@@ -21,13 +15,6 @@ app.listen(port, () => {
 	console.log(`Serveur en cours d'exécution sur http://localhost:${port}`);
 });
 
-
-
-app.put("/", (req, res) => {
-	res.json({
-		msg: "hello rest api ici le put",
-	})
-})
 
 app.delete("/", (req, res) => {
 	res.json({
@@ -52,3 +39,43 @@ app.post("/", (req, res) => {
     
     res.status(201).json(newUser)
 })
+
+app.put("/:id", (req, res) => {
+
+    const { firstName, lastName } = req.body
+    const id = parseInt(req.params.id)
+    const userIndex = users.findIndex((user) => user.id === id)
+
+    if (userIndex < 0)
+		return res.status(404).json({ msg: "utilisateur non trouvé" })
+
+	if (firstName) users[userIndex].firstName = firstName
+	if (lastName) users[userIndex].lastName = lastName
+
+    res.json({
+		msg: "utilisateur mis à jour",
+		user: users[userIndex],
+	})
+
+
+})
+
+app.delete("/:id", (req, res) => {
+
+    const id = parseInt(req.params.id)
+
+    const userIndex = users.findIndex((user) => user.id === id)
+
+    if (userIndex < 0)
+		return res.status(404).json({ msg: "utilisateur non trouvé" })
+
+
+
+    users.splice(userIndex, 1)
+
+	res.json({
+		msg: "utilisateur suprimée",
+	})
+
+})
+app.use("/api/", usersRouter)

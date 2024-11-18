@@ -1,18 +1,10 @@
 const express = require("express")
 const router = express.Router()
-
+const {getAllUsers}= require ("../controllers/usersControllers")
 
 const db=require("../database")
 
-router.get('/users', (req, res) => {
-    db.all('SELECT * FROM users', [], (err, rows) => {
-        if (err) {
-          res.status(500).json({ error: err.message });
-        } else {
-          res.json(rows);
-        }
-      });
-});
+router.get('/users', );
 
 router.post("/users", (req, res) => {
 const { firstName, lastName } = req.body
